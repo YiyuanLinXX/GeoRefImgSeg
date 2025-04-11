@@ -18,6 +18,7 @@ As our robot autonomously navigates through the vineyard to collect data, both i
 
 ```bash
 project_root/
+├── autoProjection.py
 ├── Data
 │   └── OBlock                             # Data files template
 │       ├── Grapevines_Geo_Reference.csv   # Grapevine root positions with row and ID 
@@ -84,9 +85,18 @@ project_root/
 
 ## Usage
 
+0. Prepared the files and project the GPS coordinates of the grapevines onto the row.
+
+   ```bash
+   python3 autoProjection.py \
+       --row_se_file_path /path/to/Row_SE_GPS.csv \
+       --grapevine_file_path /path/to/Grapevines_GPS_origin.csv \
+       --output_file_path /path/to/Grapevines_Geo_Reference.csv
+   ```
+
 1. Place your input CSV files in `Data/{Your_Dataset}/` following the provided formats in `Data/OBlock`.
 
-   - `Grapevines_Geo_Reference.csv`: includes the gps coordinates of the grapevines
+   - `Grapevines_Geo_Reference.csv`: includes the projected GPS coordinates of the grapevines
 
      ```csv
      Row,ID,Longitude,Latitude
