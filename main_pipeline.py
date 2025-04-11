@@ -40,24 +40,34 @@ def main():
     parser.add_argument("--check_assigned_row", action="store_true", help="Visualize camera points colored by assigned row.")
     parser.add_argument("--fov_samples", type=int, default=0, help="If > 0, visualize N random FOV projection samples.")
     parser.add_argument("--visualize_vine_cam", type=int, default=0, help="If > 0, visualize N matched vine-camera images.")
+
+    # Configurable paths and parameters
+    parser.add_argument("--grapevines_file", type=str, default="Data/OBlock/Grapevines_Geo_Reference.csv", help="Path to grapevine reference file.")
+    parser.add_argument("--image_gps_file", type=str, default="Data/OBlock/Image_GPS.csv", help="Path to image GPS file.")
+    parser.add_argument("--row_file", type=str, default="Data/OBlock/Row_SE_GPS_OBlock.csv", help="Path to row start/end file.")
+    parser.add_argument("--grapevine_coverage_file_output_path", type=str, default="Data/OBlock/Grapevines_with_Coverage.csv", help="Output path for computed grapevine coverage file.")
+    parser.add_argument("--final_output_path", type=str, default="Data/OBlock/Image_GPS_FOV_matched_vines.csv", help="Final CSV output path.")
+    parser.add_argument("--offset_m", type=float, default=0.76, help="Camera offset distance (meters) from GPS receiver.")
+    parser.add_argument("--cam_fov_degree", type=float, default=60.5, help="Camera field of view (degrees).")
+    parser.add_argument("--extend_first_last", type=float, default=0.5, help="Extension distance for first/last vine.")
+    parser.add_argument("--extend_not_continuous", type=float, default=1.0, help="Extension distance for non-continuous vine IDs.")
+    parser.add_argument("--max_half_extend", type=float, default=1.2, help="Maximum half-distance between continuous vines.")
+
     args = parser.parse_args()
 
-    # Paths and configuration
-    # ==========================================================
-    grapevines_file = "Data/OBlock/Grapevines_Geo_Reference.csv"
-    image_gps_file = "Data/OBlock/Image_GPS.csv"
-    row_file = "Data/OBlock/Row_SE_GPS_OBlock.csv"
-    grapevine_coverage_file_output_path = "Data/OBlock/Grapevines_with_Coverage.csv"
-    final_output_path = "Data/OBlock/Image_GPS_FOV_matched_vines.csv"
+    # Paths and configuration from args
+    grapevines_file = args.grapevines_file
+    image_gps_file = args.image_gps_file
+    row_file = args.row_file
+    grapevine_coverage_file_output_path = args.grapevine_coverage_file_output_path
+    final_output_path = args.final_output_path
 
-    offset_m = 0.76
-    cam_fov_degree = 60.5
+    offset_m = args.offset_m
+    cam_fov_degree = args.cam_fov_degree
+    extend_first_last = args.extend_first_last
+    extend_not_continuous = args.extend_not_continuous
+    max_half_extend = args.max_half_extend
 
-    extend_first_last = 0.5
-    extend_not_continuous = 1.0
-    max_half_extend = 1.2
-    # ==========================================================
-    
     # Step 0: compute grapevine coverage and save to grapevine_coverage_file_output_path
     print("[INFO] Step 0: Computing grapevine coverage region...")
     compute_vine_coverage_variable(
@@ -154,7 +164,6 @@ def main():
         visualize_matched_vines(final_output_path, grapevine_coverage_file_output_path, row_file, num_samples=args.visualize_vine_cam)
     else:
         print("[INFO] Skipping vine-camera match visualization.")
-
 
 if __name__ == "__main__":
     main()
