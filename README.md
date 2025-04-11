@@ -4,13 +4,75 @@ Last updated by [Yiyuan Lin](yl3663@cornell.edu) on Apr 10, 2025
 
 
 
-# Vineyard Image-to-Vine Matching Pipeline
+## Vineyard Image-to-Vine Matching Pipeline
 
-This pipeline processes vineyard images and GPS data collected by autonomous systems. It projects image fields-of-view (FOV) onto vineyard rows, determines which grapevines are covered in each image, and provides various visualization tools for debugging and verification.
+This pipeline processes vineyard images and GPS data collected by our autonomous phenotyping robot PPBv2. It projects camera (image) fields-of-view (FOV) onto vineyard rows, determines which grapevines are covered in each image, and provides various visualization tools for debugging and verification.
 
 
+
+## Prerequisite
+
+- Install necessary python packages by running the following command in the terminal
+
+- if you are using `conda`, run
+
+  ```bash
+  conda create -n GeoRefImgSeg
+  conda install requirement.txt
+  ```
+
+- if you are not using `conda`, then run
+
+  ```bash
+  pip install -r requirement.txt
+  ```
+
+  
+
+## Quick Start in 1 min
+
+1. (Optional) Open a terminal and create a conda environment
+
+2. Install necessary packages
+
+   1. if you are using `conda`,
+
+      ```bash
+      conda install requirement.txt
+      ```
+
+   2. if you are not using `conda`, then run
+
+      ```bash
+      pip install -r requirement.txt
+      ```
+
+3. Run the pipeline
+
+   ```bash
+   python main_pipeline.py # use python3 if package python-is-python3 is not installed
+   # python3 main_pipiline.py
+   ```
+
+4. Check the output files in the output directory
+
+
+
+## Usage
+
+
+
+### Run the geo-reference based image segregation on your own data
+
+
+
+
+
+###  
 
 ## Directory Structure
+
+Please put your data files
 
 ```bash
 project_root/
@@ -41,7 +103,8 @@ project_root/
 Ensure your terminal is in the project root and required packages are installed (`pandas`, `numpy`, `matplotlib`):
 
 ```bash
-python main_pipeline.py [options]
+python main_pipeline.py [options] # use python3 if package python-is-python3 is not installed
+# python3 main_pipiline.py [options]
 ```
 
 
