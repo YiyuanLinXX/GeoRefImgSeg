@@ -1,22 +1,16 @@
-# README
+# GeoRefImgSeg: Geo-reference Based Image Segregation
 
 Last updated by [Yiyuan Lin](yl3663@cornell.edu) on Apr 10, 2025
 
-
-
-## Vineyard Image-to-Vine Matching Pipeline
+---
 
 
 
-# GeoRefImgSeg: Geo-reference Based Image Segregation
+This repository provides a complete Python pipeline for processing geo-referenced vineyard GPS data and image data collected by our autonomous phenotyping robot [PPBv2](https://yiyuanlinxx.github.io/portfolio/2_PPB_V2/) at [CAIR Lab](https://cair.cals.cornell.edu/). It matches image GPS positions with vineyard rows and grapevines, computes camera view geometry, and identifies which vines are covered in each image. Optional visualizations assist in inspection and validation at every step.
 
-This repository provides a complete Python pipeline for processing geo-referenced vineyard image data. It matches image GPS positions with vineyard rows and grapevines, computes camera view geometry, and identifies which vines are covered in each image. Optional visualizations assist in inspection and validation at every step.
+Specifically, we measured the GPS coordinates at the base (root) of each grapevine in the vineyard and projected all of them onto a single straight line to simplify the processing workflow. This simplification proved to be both reasonable and effective. We refer to these processed coordinates as geo-reference data.
 
-This pipeline processes vineyard images and GPS data collected by our autonomous phenotyping robot PPBv2. It projects camera (image) fields-of-view (FOV) onto vineyard rows, determines which grapevines are covered in each image, and provides various visualization tools for debugging and verification.
-
-我们测量了葡萄园里的每一棵葡萄藤的根部的gps坐标，并将它们全部投影在一条直线上来简化流程，结果证明我们的简化是合理且有效的。我们把这些数据称为geo reference数据
-
-当我们的机器人在葡萄园里通过自主导航采集数据时，图像数据以及同步的机器人GPS坐标会被记录，我们利用这些数据和geo reference数据来确定每一张拍摄的图片里包含哪些葡萄藤的canopy。
+As our robot autonomously navigates through the vineyard to collect data, both image data and synchronized GPS coordinates of the robot are recorded. By combining these data with the geo-reference data, we determine which grapevine canopies are included in each captured image.
 
 
 
@@ -41,7 +35,6 @@ project_root/
     ├── matchVinesInCamFOV.py
     ├── plotData.py
 
-
 ```
 
 
@@ -53,12 +46,21 @@ project_root/
   - if you are using `conda`, run
 
     ```bash
-    conda create -n GeoRefImgSeg
-    conda install requirement.txt
+    conda create -n GeoRefImgSeg python=3.9 -y
+    conda activate GeoRefImgSeg
+    pip install -r requirements.txt
     ```
 
 
-  - if you are not using `conda`, then run
+  - if you are using python virtual environment, run
+
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate  # Windows: venv\Scripts\activate
+    pip install -r requirements.txt
+    ```
+
+  - if you are not using any virtual environment, then run
 
     ```bash
     pip install -r requirements.txt
@@ -69,36 +71,20 @@ project_root/
 
 ## Quick Start in 1 min
 
-1. (Optional) Open a terminal and create a conda environment
-
-2. Install necessary packages
-
-   1. if you are using `conda`,
-
-      ```bash
-      conda install requirement.txt
-      ```
-
-   2. if you are not using `conda`, then run
-
-      ```bash
-      pip install -r requirement.txt
-      ```
-
-3. Run the pipeline with provided template data files
+1. Run the main pipeline with provided template data files
 
    ```bash
    python main_pipeline.py # use python3 if package python-is-python3 is not installed
    # python3 main_pipiline.py
    ```
 
-4. Check the output files in the output directory
+2. Check the output results in `Data/OBlock/`.
 
 
 
 ## Usage
 
-1. Put your raw files and adjust them into the format as the template files in `/Data/OBlock`.
+1. Place your input CSV files in `Data/{Your_Dataset}/` following the provided formats in `Data/OBlock`.
 
    - `Grapevines_Geo_Reference.csv`: includes the gps coordinates of the grapevines
 
@@ -137,8 +123,6 @@ project_root/
      ......
      ```
 
-   
-
 2. Run the main pipeline
 
    ```bash
@@ -171,7 +155,7 @@ python main_pipeline.py \
   --visualize_vine_cam 5
 ```
 
-- Run silently to generate output CSV:
+- Minimal pipeline run (silent, default paths):
 
 ```bash
 python3 main_pipeline.py
@@ -182,17 +166,6 @@ python3 main_pipeline.py
 ```bash
 python3 main_pipeline.py --visualize_vine_cam 3
 ```
-
-
-
-## Outputs
-
-| File                              | Description                                                  |
-| --------------------------------- | ------------------------------------------------------------ |
-| `Grapevines_with_Coverage.csv`    | Each vine’s projected coverage range along the row           |
-| `Image_GPS_FOV_matched_vines.csv` | Image-to-vine matches with FOV geometry and `Covered_Vines` column |
-
-- Visualizations (if enabled) displayed inline via `matplotlib`
 
 
 
@@ -219,18 +192,26 @@ python3 main_pipeline.py --visualize_vine_cam 3
 
 
 
+## Outputs
+
+| File                              | Description                                                  |
+| --------------------------------- | ------------------------------------------------------------ |
+| `Grapevines_with_Coverage.csv`    | Each vine’s projected coverage range (start/end) along the row |
+| `Image_GPS_FOV_matched_vines.csv` | Image FOV projections and matched vine IDs                   |
+
+- Visualizations (if enabled) displayed inline via `matplotlib`
+
+
+
 ## Processing Steps
 
-| Step     | Description                                              |
-| -------- | -------------------------------------------------------- |
-| 0        | Compute grapevine coverage span along rows               |
-| 1        | Classify image direction as F (forward) or B (backward)  |
-| 2        | Compute camera position offset from GPS                  |
-| 3        | Assign each camera point to its nearest row              |
-| 4        | Compute FOV intersections (center/left/right) on the row |
-| 5        | Match image FOV to overlapping grapevine coverage spans  |
-| 6        | Save results                                             |
-| Optional | Visualize any of the above                               |
+1. **Compute vine canopy coverage** on vineyard row.
+2. **Determine robot movement direction** using consecutive GPS points.
+3. **Compute camera position** offset from GPS based on direction.
+4. **Assign camera point to nearest row**.
+5. **Project camera FOV** and compute intersections.
+6. **Match grapevines** whose canopies intersect with FOV.
+7. **Export results**, optionally visualize each step.
 
 
 
